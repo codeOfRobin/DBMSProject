@@ -1,6 +1,7 @@
+var db = require('./db');
 var Sequelize = require('sequelize')
 
-var potluck = sequelize.define('potluck', {
+var potluck = db.define('potluck', {
   id: { type: Sequelize.INTEGER, primaryKey: true},
   name: Sequelize.TEXT,
   food: Sequelize.TEXT,
