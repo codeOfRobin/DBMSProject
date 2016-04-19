@@ -8,12 +8,18 @@ musicApp.controller('mainController', ['$scope', 'Upload', function ($scope, Upl
         }
     };
 
-    // upload on file select or drop
-    $scope.upload = function (file) {
-        Upload.upload({
-            url: 'upload/url',
-            data: {file: file, 'username': $scope.username}
-        }).then(function (resp) {
+    // for multiple files:
+    $scope.uploadFiles = function (files) {
+        if (files && files.length)
+        {
+            data = {id: "asdfkjsndafksandjk"}
+            // or send them all together for HTML5 browsers:
+            Upload.upload({
+                url: '/uploadSongs',
+                method: 'POST',
+                data: data ,// Any data needed to be submitted along with the files
+                file: files
+            }).then(function (resp) {
             console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
         }, function (resp) {
             console.log('Error status: ' + resp.status);
@@ -21,13 +27,6 @@ musicApp.controller('mainController', ['$scope', 'Upload', function ($scope, Upl
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
             console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
         });
-    };
-    // for multiple files:
-    $scope.uploadFiles = function (files) {
-        if (files && files.length)
-        {
-            // or send them all together for HTML5 browsers:
-            Upload.upload({data: {file: files}});
         }
     }
     $scope.formData = {};

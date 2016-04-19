@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Node/Angular Music App</title>
     <link rel="stylesheet" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/style.css">
     <style>
     html                    { overflow-y:scroll; }
     body                    { padding-top:50px; }
@@ -34,18 +35,8 @@
         </ul>
     </div>
 
-    <form name="form">
-        <div ngf-drop="uploadFiles($files)" class="drop-box"
-        ngf-drag-over-class="'dragover'" ngf-multiple="true"
-        ngf-pattern="'audio/mp3'" class="container">Drop music here</div>
-    </form>
-
-    <audio
-      ngf-src="file" //To preview the selected file, sets src attribute to the file data url.
-      ngf-resize="{width: 20, height: 20, quality: 0.9}" // only for image resizes the image before setting it
-                 // as src or background image. quality is optional.
-      ngf-no-object-url="true or false" // see #887 to force base64 url generation instead of object url. Default false
-    >
-
+    Drop File:
+    <div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
+    <audio controls="" ngf-src="!files[0].$error && files[0]"></audio>
 </body>
 </html>
