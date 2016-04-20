@@ -1,6 +1,11 @@
-var musicApp = angular.module('musicApp', ['ngFileUpload']);
+var musicApp = angular.module('musicApp', ['ngFileUpload','LocalStorageModule']);
 
-musicApp.controller('mainController', ['$scope', 'Upload', function ($scope, Upload) {
+musicApp.config(function (localStorageServiceProvider) {
+  localStorageServiceProvider
+    .setPrefix('musicApp');
+});
+
+musicApp.controller('mainController', ['$scope', 'Upload','localStorageService', function ($scope, Upload,localStorageService) {
     // upload later on form submit or something similar
     $scope.submit = function() {
         if ($scope.form.file.$valid && $scope.file) {
@@ -40,5 +45,7 @@ musicApp.controller('mainController', ['$scope', 'Upload', function ($scope, Upl
         console.log(data);
         $scope.songs = data.songs
         $scope.$apply();
+        // localStorageService.set("something","something else")
+        console.log(localStorageService.get("something"));
     });
 }]);

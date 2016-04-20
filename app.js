@@ -17,11 +17,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
-// Potluck.findAll().then(function(potlucks){
-//     console.log(potlucks.map(function(p){
-//         return p.dataValues
-//     }));
-// })
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -80,7 +75,8 @@ app.get('/*.mp3',function(req,res)
     console.log(req.params);
     res.sendFile(__dirname + '/uploads/'+req.params[0]+'.mp3');
 })
-app.get('*',function(req,res){
+app.get('*',function(req,res)
+{
     res.sendFile(__dirname + '/public/index.html');
 })
 
@@ -95,11 +91,9 @@ app.post('/uploadSongs', upload.any(), function (req, res, next) {
     fs.rename(tmp_path, target_path, function(err) {
         if (err)
         throw err;
-        // Delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files.
         fs.unlink(tmp_path, function() {
             if (err)
             throw err;
-            //
             res.json("done : "+ target_path)
         });
     });
