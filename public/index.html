@@ -42,5 +42,17 @@
     Drop File:
     <div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
     <audio controls="" ngf-src="!files[0].$error && files[0]"></audio>
+
+    <form method="post" action="/login">
+        <p><input type="text" name="email" value="" placeholder="Username or Email"></p>
+        <p><input type="password" name="password" value="" placeholder="Password"></p>
+        <p class="submit"><input type="submit" name="commit" value="Login"></p>
+    </form>
+
+    <form method="post" action="/signup">
+        <p><input type="text" name="email" value="" placeholder="Username or Email"></p>
+        <p><input type="password" name="password" value="" placeholder="Password"></p>
+        <p class="submit"><input type="submit" name="commit" value="Signup"></p>
+    </form>
 </body>
 </html>

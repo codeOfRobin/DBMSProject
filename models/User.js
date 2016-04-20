@@ -10,7 +10,8 @@ var User = db.define('user', {
     name: Sequelize.TEXT,
     fbID: Sequelize.TEXT,
     fbToken : Sequelize.TEXT,
-    email : Sequelize.TEXT
+    email : Sequelize.TEXT,
+    password: Sequelize.TEXT
 },{
     timestamps: false,
     freezeTableName: true,

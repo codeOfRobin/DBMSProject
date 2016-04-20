@@ -1,0 +1,17 @@
+<div class="container">
+    
+    <div class="jumbotron text-center">
+        <h1>I'm a Todo-aholic <span class="label label-info">{{ todos.length }}</span></h1>
+    </div>
+    <p>
+        Ab chalega {{2+34}}
+    </p>
+
+    <ul ng-repeat = "song in songs">
+        <li> {{song}} </li>
+    </ul>
+</div>
+
+Drop File:
+<div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
+<audio controls="" ngf-src="!files[0].$error && files[0]"></audio>
