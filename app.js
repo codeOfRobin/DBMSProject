@@ -7,158 +7,87 @@ var async = require('async')
 var bodyParser = require('body-parser');
 var multer  = require('multer')
 var upload = multer({ dest: './uploads' })
-var passport = require('passport')
-// var FacebookStrategy = require('passport-facebook').Strategy;
-var LocalStrategy   = require('passport-local').Strategy;
 var bcrypt   = require('bcrypt-nodejs');
 var fs = require('fs')
 var jwt = require('jsonwebtoken');
+var cors = require('cors')
+var request = require('request');
 User.sync({force:true})
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('tiny'))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(cors())
 var secret = 'superSecret'
 app.set(secret, "secret");
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
 
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
+app.post('/auth/facebook', function(req, res) {
+  var fields = ['id', 'email', 'first_name', 'last_name', 'link', 'name'];
+  var accessTokenUrl = 'https://graph.facebook.com/v2.5/oauth/access_token';
+  var graphApiUrl = 'https://graph.facebook.com/v2.5/me?fields=' + fields.join(',');
+  var params = {
+    code: req.body.code,
+    client_id: req.body.clientId,
+    client_secret: "e6cf1704ddfca7af4c590dc656d50377",
+    redirect_uri: req.body.redirectUri
+  };
 
-
-passport.use('localLogin',new LocalStrategy(
-    {
-        usernameField : 'email',
-        passwordField : 'password',
-        passReqToCallback : false
-    },
-    function(email, password, done)
-    {
-        User.findOne({ where: { 'email': email } }).then(function(user)
-        {
-            if (!user)
-            {
-                return done(null, false, { message: 'email doesnt exists'});
-            }
-            if (!bcrypt.compareSync(password, user.password))
-            {
-                return done(null, false, { message: 'Incorrect password.' });
-            }
-            return done(null, user);
-        })
+  // Step 1. Exchange authorization code for access token.
+  request.get({ url: accessTokenUrl, qs: params, json: true }, function(err, response, accessToken) {
+    if (response.statusCode !== 200) {
+      return res.status(500).send({ message: accessToken.error.message });
     }
-));
 
-passport.use('localSignup',new LocalStrategy(
-    {
-        usernameField : 'email',
-        passwordField : 'password',
-        passReqToCallback : true
-    },
-    function(req,email,password,done)
-    {
-        User.findOne({ where: { 'email': email } }).then(function(user)
-        {
-            if (user)
-            {
-                return done(null, false, { message: 'email already exists'});
-            }
-            else
-            {
-                var user = User.build({
-                    email: email,
-                    password: bcrypt.hashSync(password, bcrypt.genSaltSync(8), null)
-                })
-                console.log(user);
-                user.save().then(function() {
-                    return done(null, user);
-                })
-
-            }
-        })
-    }
-))
-
-// passport.use(new FacebookStrategy({
-//
-//     // pull in our app id and secret from our auth.js file
-//     clientID        : "473466989524267",
-//     clientSecret    : "e6cf1704ddfca7af4c590dc656d50377",
-//     callbackURL     : "http://localhost:4000/auth/facebook/callback",
-//     profileFields: ['id', 'displayName', 'photos', 'email']
-// },
-// function(token, refreshToken, profile, done)
-// {
-//     process.nextTick(function()
-//     {
-//         User.findOne({ where: {fbID: profile.id} }).then(function(user)
-//         {
-//             if (user)
-//             {
-//                 return done(null, user); // user found, return that user
-//             }
-//             else
-//             {
-//                 var user = User.build({
-//                     name: profile.displayName,
-//                     fbID: profile.id,
-//                     email: profile.emails[0].value,
-//                     fbToken: token
-//                 })
-//                 user.toJSON().save().then(function() {
-//                     return done(null, user);
-//                 })
-//
-//             }
-//         })
-//     });
-//
-// }));
-
-
-app.post('/login', function(req, res, next)
-{
-    passport.authenticate('localLogin', function(err, user, info) {
-        if (err) { return next(err) }
-        if (!user) {
-            console.log(info.message);
-            return res.status(401).json({ error: info.message });
-        }
-
+    // Step 2. Retrieve profile information about the current user.
+    request.get({ url: graphApiUrl, qs: accessToken, json: true }, function(err, response, profile) {
+      if (response.statusCode !== 200) {
+        return res.status(500).send({ message: profile.error.message });
+      }
+      console.log(profile);
+    //   if (req.header('Authorization')) {
+    //     User.findOne({ facebook: profile.id }, function(err, existingUser) {
+    //       if (existingUser) {
+    //         return res.status(409).send({ message: 'There is already a Facebook account that belongs to you' });
+    //       }
+    //       var token = req.header('Authorization').split(' ')[1];
+    //       var payload = jwt.decode(token, config.TOKEN_SECRET);
+    //       User.findById(payload.sub, function(err, user) {
+    //         if (!user) {
+    //           return res.status(400).send({ message: 'User not found' });
+    //         }
+    //         user.facebook = profile.id;
+    //         user.picture = user.picture || 'https://graph.facebook.com/v2.3/' + profile.id + '/picture?type=large';
+    //         user.displayName = user.displayName || profile.name;
+    //         user.save(function() {
+    //           var token = createJWT(user);
+    //           res.send({ token: token });
+    //         });
+    //       });
+    //     });
+    //   } else {
+        // Step 3. Create a new user account or return an existing one.
+        // User.findOne({ facebook: profile.id }, function(err, existingUser) {
+        //   if (existingUser) {
+        //     var token = createJWT(existingUser);
+        //     return res.send({ token: token });
+        //   }
+        //   var user = new User();
+        //   user.facebook = profile.id;
+        //   user.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
+        //   user.displayName = profile.name;
+        //   user.save(function() {
+        //     var token = createJWT(user);
+        //     res.send({ token: token });
+        //   });
+        // });
         var token = jwt.sign({ foo: 'bar' }, 'shhhhh', {
             expiresIn: 24*60*60 // expires in 24 hours
         });
-        res.json({ token : token, userId:user._id, email:user.email, type:user.userType});
-
-    })(req, res, next);
+        res.json({ token : token, profile:profile});
+    //   }
+    });
+  });
 });
-
-app.post('/signup', function(req, res, next)
-{
-    passport.authenticate('localSignup', function(err, user, info) {
-        if (err) { return next(err) }
-        var token = jwt.sign({ foo: 'bar' }, 'shhhhh', {
-            expiresIn: 24*60*60 // expires in 24 hours
-        });
-        res.json({ token : token, email:user.email, userId:user._id,type:user.userType});
-
-    })(req, res, next);
-});
-
-// app.get('/auth/facebook', passport.authenticate('facebook', { scope : ['user_friends', 'email']}));
-//
-// app.get('/auth/facebook/callback',
-//         passport.authenticate('facebook', {
-//             successRedirect : '/',
-//             failureRedirect : '/'
-//         }));
-
-
 app.get('/*.mp3',function(req,res)
 {
     console.log(req.params);
@@ -187,5 +116,5 @@ app.post('/uploadSongs', upload.any(), function (req, res, next) {
         });
     });
 })
-app.listen(4000);
-console.log('Magic happens on port 4000');
+app.listen(3000);
+console.log('Magic happens on port 3000');

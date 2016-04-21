@@ -1,12 +1,19 @@
-var musicApp = angular.module('musicApp', ['ngFileUpload','LocalStorageModule']);
+var musicApp = angular.module('musicApp', ['ngFileUpload','LocalStorageModule','satellizer']);
 
-musicApp.config(function (localStorageServiceProvider) {
-  localStorageServiceProvider
-    .setPrefix('musicApp');
+musicApp.config(function (localStorageServiceProvider, $authProvider)
+{
+
+    localStorageServiceProvider.setPrefix('musicApp');
+
+    $authProvider.facebook({
+        clientId: '473466989524267'
+    });
+
 });
 
-musicApp.controller('mainController', ['$scope', 'Upload','localStorageService', function ($scope, Upload,localStorageService) {
+musicApp.controller('mainController', ['$scope', 'Upload','localStorageService','$auth' , function ($scope, Upload,localStorageService, $auth) {
     // upload later on form submit or something similar
+
     $scope.submit = function() {
         if ($scope.form.file.$valid && $scope.file) {
             $scope.upload($scope.file);
@@ -25,15 +32,19 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
                 data: data ,// Any data needed to be submitted along with the files
                 file: files
             }).then(function (resp) {
-            console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
-        }, function (resp) {
-            console.log('Error status: ' + resp.status);
-        }, function (evt) {
-            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-            console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
-        });
+                console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+            }, function (resp) {
+                console.log('Error status: ' + resp.status);
+            }, function (evt) {
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+            });
         }
     }
+
+
+
+
     $scope.formData = {};
 
     var data = {};
@@ -48,4 +59,9 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         // localStorageService.set("something","something else")
         console.log(localStorageService.get("something"));
     });
+
+    $scope.authenticate = function(provider) {
+        $auth.authenticate(provider);
+    };
+
 }]);

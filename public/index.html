@@ -18,7 +18,7 @@
     <script src="./bower_components/angular/angular.min.js"></script>
     <script src="./bower_components/angular-local-storage/dist/angular-local-storage.min.js"></script>
     <script src="./bower_components/ng-file-upload/ng-file-upload.min.js"></script>
-
+    <script src="./bower_components/satellizer/satellizer.min.js"></script>
     <script src="core.js"></script>
 
 </head>
@@ -26,7 +26,9 @@
     <div class="container">
         <p>Login or Register with:</p>
 
-        <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
+        <!-- <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a> -->
+
+        <button ng-click="authenticate('facebook')">Sign in with Facebook</button>
         <div class="jumbotron text-center">
             <h1>I'm a Todo-aholic <span class="label label-info">{{ todos.length }}</span></h1>
         </div>
@@ -43,16 +45,18 @@
     <div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
     <audio controls="" ngf-src="!files[0].$error && files[0]"></audio>
 
+
+
     <form method="post" action="/login">
         <p><input type="text" name="email" value="" placeholder="Username or Email"></p>
         <p><input type="password" name="password" value="" placeholder="Password"></p>
         <p class="submit"><input type="submit" name="commit" value="Login"></p>
     </form>
 
-    <form method="post" action="/signup">
+    <form method="post" action="/s">
         <p><input type="text" name="email" value="" placeholder="Username or Email"></p>
         <p><input type="password" name="password" value="" placeholder="Password"></p>
-        <p class="submit"><input type="submit" name="commit" value="Signup"></p>
+        <p class="submit"><input type="submit" name="commit" value="Login"></p>
     </form>
 </body>
 </html>
