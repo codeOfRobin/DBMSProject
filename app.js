@@ -1,9 +1,10 @@
 var express = require('express');
-
 var app = express();
 var morgan = require('morgan');
 var Potluck = require('./models/potluck')
 var User = require('./models/user')
+var Song = require('./models/song')
+var mm = require('musicmetadata');
 var async = require('async')
 var bodyParser = require('body-parser');
 var multer  = require('multer')
@@ -79,28 +80,38 @@ app.post('/auth/facebook', function(req, res)
 
 app.post('/auth/signup', function(req, res)
 {
-    User.findOne({ where: {fbID: profile.id} }).then(function(existingUser)
+    User.findOne({ where: {email: req.body.email} }).then(function(existingUser)
     {
         if (existingUser)
         {
-            jwt.sign({user: profile.email}, 'adsf', {expiresIn: 24*60*60},function(token)
-            {
-                res.send({ token: token });
-            });
+            return res.status(409).send({ message: 'Email is already taken' });
         }
         var user = User.build({
-            name: profile.name,
-            fbID: profile.id,
-            email: profile.email,
+            email: req.body.email,
+            password : bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8), null)
         })
         user.save().then(function()
         {
-            jwt.sign({user: profile.email}, 'adsf', {expiresIn: 24*60*60},function(token)
+            jwt.sign({user: req.body.email}, 'adsf', {expiresIn: 24*60*60},function(token)
             {
                 res.send({ token: token });
             });
-
         })
+    });
+})
+
+app.post('/auth/login', function(req, res)
+{
+    User.findOne({ where: {email: req.body.email} }).then(function(existingUser)
+    {
+        if (!existingUser)
+        {
+            return res.status(409).send({ message: 'Email not present' });
+        }
+        jwt.sign({user: req.body.email}, 'adsf', {expiresIn: 24*60*60},function(token)
+        {
+            res.send({ token: token });
+        });
     });
 })
 // app.use(function(req, res, next)
@@ -165,6 +176,16 @@ app.post('/uploadSongs', upload.any(), function (req, res, next)
             res.json("done : "+ target_path)
         });
     });
+    var parser = mm(fs.createReadStream(target_path), function (err, metadata) {
+        if (err) throw err;
+        console.log(metadata);
+    });
+    var newSong = Song.build({
+        trackName: metadata.title,
+        artist: metadata.artist[0],
+        uploaderId: req.body.uploaderId,
+        securityType: req.body.securityType
+    })
 })
 app.listen(3000);
 console.log('Magic happens on port 3000');

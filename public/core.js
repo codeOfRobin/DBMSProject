@@ -12,8 +12,48 @@ musicApp.config(function (localStorageServiceProvider, $authProvider)
 });
 
 musicApp.controller('mainController', ['$scope', 'Upload','localStorageService','$auth' , function ($scope, Upload,localStorageService, $auth) {
-    // upload later on form submit or something similar
 
+    // user stuff
+    $scope.isSignedIn = false
+    $scope.isAuthenticated = function() {
+        return $auth.isAuthenticated();
+    };
+    $scope.authenticate = function(provider) {
+        $auth.authenticate(provider)
+        .then(function()
+        {
+            console.log("auth ho gaya");
+            console.log($auth.getPayload());
+
+        })
+    };
+    var user = {
+        email: $scope.email,
+        password: $scope.password
+    };
+    $scope.signup = function() {
+        $auth.signup($scope.user)
+        .then(function() {
+            console.log("signed up user");
+            console.log($auth.getPayload().user);
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+    };
+    $scope.login = function() {
+        $auth.login($scope.user)
+        .then(function() {
+            console.log("logged in user");
+            console.log($auth.getPayload().user);
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+    };
+
+
+    //upload stuff
     $scope.submit = function() {
         if ($scope.form.file.$valid && $scope.file) {
             $scope.upload($scope.file);
@@ -45,6 +85,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
 
 
 
+    //songs
     $scope.formData = {};
 
     var data = {};
@@ -67,25 +108,6 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         $scope.$apply();
     });
 
-    $scope.authenticate = function(provider) {
-        $auth.authenticate(provider)
-        .then(function()
-        {
-            console.log("auth ho gaya");
-            console.log($auth.getPayload());
 
-        })
-    };
-    var user = {
-        email: $scope.email,
-        password: $scope.password
-    };
-    $scope.signup = function() {
-      $auth.signup($scope.user)
-        .then(function() {
-          $location.path('/');
-        })
-        .catch(function(error) {
-        });
-    };
+
 }]);
