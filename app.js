@@ -4,6 +4,7 @@ var morgan = require('morgan');
 var Potluck = require('./models/potluck')
 var User = require('./models/user')
 var Song = require('./models/song')
+var Share = require('./models/share')
 var mm = require('musicmetadata');
 var async = require('async')
 var bodyParser = require('body-parser');
