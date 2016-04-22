@@ -60,8 +60,20 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         console.log(localStorageService.get("something"));
     });
 
-    $scope.authenticate = function(provider) {
-        $auth.authenticate(provider);
-    };
+    $.post( "/user/get", {email:$auth.getPayload().user})
+    .done(function( data ) {
+        console.log(data);
+        $scope.currentUser = data.user
+        $scope.$apply();
+    });
 
+    $scope.authenticate = function(provider) {
+        $auth.authenticate(provider)
+        .then(function()
+        {
+            console.log("auth ho gaya");
+            console.log($auth.getPayload());
+
+        })
+    };
 }]);
