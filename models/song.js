@@ -10,7 +10,8 @@ var Song = db.define('song', {
     trackName: Sequelize.TEXT,
     uploaderId: Sequelize.TEXT,
     securityType: Sequelize.ENUM('public','shared'),
-    artist: Sequelize.TEXT
+    artist: Sequelize.TEXT,
+    trackLink: Sequelize.TEXT
 },{
     timestamps: false,
     freezeTableName: true,

@@ -15,6 +15,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
 
     // user stuff
     $scope.isSignedIn = false
+    $scope.currentUser = {}
     $scope.isAuthenticated = function() {
         return $auth.isAuthenticated();
     };
@@ -36,6 +37,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         .then(function() {
             console.log("signed up user");
             console.log($auth.getPayload().user);
+            userRequest()
         })
         .catch(function(error) {
             console.log(error);
@@ -46,6 +48,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         .then(function() {
             console.log("logged in user");
             console.log($auth.getPayload().user);
+            userRequest()
         })
         .catch(function(error) {
             console.log(error);
@@ -64,7 +67,15 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
     $scope.uploadFiles = function (files) {
         if (files && files.length)
         {
-            data = {id: "asdfkjsndafksandjk"}
+            data ={uploaderId : $scope.currentUser.id}
+            if ($scope.isSongPublic)
+            {
+                data["securityType"] = "public"
+            }
+            else
+            {
+                data["securityType"] = "shared"
+            }
             // or send them all together for HTML5 browsers:
             Upload.upload({
                 url: '/uploadSongs',
@@ -73,6 +84,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
                 file: files
             }).then(function (resp) {
                 console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                console.log(resp.data);
             }, function (resp) {
                 console.log('Error status: ' + resp.status);
             }, function (evt) {
@@ -101,12 +113,16 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         console.log(localStorageService.get("something"));
     });
 
-    $.post( "/user/get", {email:$auth.getPayload().user})
-    .done(function( data ) {
-        console.log(data);
-        $scope.currentUser = data.user
-        $scope.$apply();
-    });
+    function userRequest()
+    {
+        $.post( "/user/get", {email:$auth.getPayload().user})
+        .done(function( data ) {
+            console.log(data);
+            $scope.currentUser = data.user
+            $scope.$apply();
+        });
+    }
+
 
 
 

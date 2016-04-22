@@ -15,6 +15,7 @@ var jwt = require('jsonwebtoken');
 var cors = require('cors')
 var request = require('request');
 User.sync()
+Song.sync({force:true})
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('tiny'))
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -158,7 +159,7 @@ app.post('/user/get',function(req,res)
 {
     User.findOne({ where: {email: req.body.email} }).then(function(existingUser)
     {
-        console.log(existingUser);
+        // console.log(existingUser);
         res.json({user:existingUser})
     })
 })
@@ -173,19 +174,25 @@ app.post('/uploadSongs', upload.any(), function (req, res, next)
         fs.unlink(tmp_path, function() {
             if (err)
             throw err;
-            res.json("done : "+ target_path)
+            // res.json("done : "+ target_path)
         });
     });
     var parser = mm(fs.createReadStream(target_path), function (err, metadata) {
         if (err) throw err;
         console.log(metadata);
+        var newSong = Song.build({
+            trackName: metadata.title,
+            artist: metadata.artist[0],
+            uploaderId: req.body.uploaderId,
+            securityType: req.body.securityType,
+            trackLink: "http://localhost:3000"+target_path.slice(7)
+        })
+        newSong.save().then(function()
+        {
+            res.json({song:newSong})
+        })
     });
-    var newSong = Song.build({
-        trackName: metadata.title,
-        artist: metadata.artist[0],
-        uploaderId: req.body.uploaderId,
-        securityType: req.body.securityType
-    })
+
 })
 app.listen(3000);
 console.log('Magic happens on port 3000');
