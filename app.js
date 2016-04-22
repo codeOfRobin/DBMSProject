@@ -77,7 +77,32 @@ app.post('/auth/facebook', function(req, res)
 });
 
 
+app.post('/auth/signup', function(req, res)
+{
+    User.findOne({ where: {fbID: profile.id} }).then(function(existingUser)
+    {
+        if (existingUser)
+        {
+            jwt.sign({user: profile.email}, 'adsf', {expiresIn: 24*60*60},function(token)
+            {
+                res.send({ token: token });
+            });
+        }
+        var user = User.build({
+            name: profile.name,
+            fbID: profile.id,
+            email: profile.email,
+        })
+        user.save().then(function()
+        {
+            jwt.sign({user: profile.email}, 'adsf', {expiresIn: 24*60*60},function(token)
+            {
+                res.send({ token: token });
+            });
 
+        })
+    });
+})
 // app.use(function(req, res, next)
 // {
 //     var token = req.body.token || req.query.token || req.headers['x-access-token'];

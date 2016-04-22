@@ -76,4 +76,16 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
 
         })
     };
+    var user = {
+        email: $scope.email,
+        password: $scope.password
+    };
+    $scope.signup = function() {
+      $auth.signup($scope.user)
+        .then(function() {
+          $location.path('/');
+        })
+        .catch(function(error) {
+        });
+    };
 }]);
