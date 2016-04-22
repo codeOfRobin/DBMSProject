@@ -25,7 +25,6 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         {
             console.log("auth ho gaya");
             console.log($auth.getPayload());
-
         })
     };
     var user = {
@@ -37,7 +36,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         .then(function() {
             console.log("signed up user");
             console.log($auth.getPayload().user);
-            userRequest()
+            updateAllData()
         })
         .catch(function(error) {
             console.log(error);
@@ -48,7 +47,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         .then(function() {
             console.log("logged in user");
             console.log($auth.getPayload().user);
-            userRequest()
+            updateAllData()
         })
         .catch(function(error) {
             console.log(error);
@@ -95,23 +94,32 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
     }
 
 
-
+    function updateAllData()
+    {
+        userRequest()
+    }
 
     //songs
-    $scope.formData = {};
+    function getPublicSongs()
+    {
+        $.post( "/songs/public")
+        .done(function( data ) {
+            console.log(data);
+            $scope.publicSongs = data
+            $scope.$apply();
+        });
+    }
 
-    var data = {};
-    data.title = "title";
-    data.message = "message";
-    data.songs = ["forgot me now", "heartless", "Bury it"]
-    $.post( "/songs", data)
-    .done(function( data ) {
-        console.log(data);
-        $scope.songs = data.songs
-        $scope.$apply();
-        // localStorageService.set("something","something else")
-        console.log(localStorageService.get("something"));
-    });
+    function getUploadedSongs()
+    {
+        var postParams = {uploaderId:$scope.currentUser.id}
+        $.post( "/songs/uploaded", postParams)
+        .done(function( data ) {
+            console.log(data);
+            $scope.uploadedSongs = data
+            $scope.$apply();
+        });
+    }
 
     function userRequest()
     {
@@ -120,6 +128,8 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
             console.log(data);
             $scope.currentUser = data.user
             $scope.$apply();
+            getPublicSongs()
+            getUploadedSongs()
         });
     }
 

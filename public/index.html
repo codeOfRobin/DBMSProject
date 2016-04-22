@@ -35,9 +35,13 @@
         <p>
             Ab chalega {{2+34}}
         </p>
-
-        <ul ng-repeat = "song in songs">
-            <li> {{song}} </li>
+        <h3>Public Songs</h3>
+        <ul ng-repeat = "publicSong in publicSongs">
+            <li> {{publicSong}} </li>
+        </ul>
+        <h3>Uploaded Songs</h3>
+        <ul ng-repeat = "uploadedSong in uploadedSongs">
+            <li> {{uploadedSong}} </li>
         </ul>
     </div>
 

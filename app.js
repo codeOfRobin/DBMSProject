@@ -15,7 +15,7 @@ var jwt = require('jsonwebtoken');
 var cors = require('cors')
 var request = require('request');
 User.sync()
-Song.sync({force:true})
+Song.sync({force:false})
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('tiny'))
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -77,7 +77,6 @@ app.post('/auth/facebook', function(req, res)
         });
     });
 });
-
 
 app.post('/auth/signup', function(req, res)
 {
@@ -151,10 +150,20 @@ app.get('*',function(req,res)
     res.sendFile(__dirname + '/public/index.html');
 })
 
-app.post('/songs',function(req,res){
-    res.json(req.body);
+app.post('/songs/public',function(req,res)
+{
+    Song.findAll({where:{securityType:"public"}}).then(function(songs)
+    {
+        res.json(songs)
+    })
 })
-
+app.post('/songs/uploaded',function(req,res)
+{
+    Song.findAll({where:{uploaderId:req.body.uploaderId}}).then(function(songs)
+    {
+        res.json(songs)
+    })
+})
 app.post('/user/get',function(req,res)
 {
     User.findOne({ where: {email: req.body.email} }).then(function(existingUser)
@@ -175,23 +184,24 @@ app.post('/uploadSongs', upload.any(), function (req, res, next)
             if (err)
             throw err;
             // res.json("done : "+ target_path)
+            var parser = mm(fs.createReadStream(target_path), function (err, metadata) {
+                if (err) throw err;
+                console.log(metadata);
+                var newSong = Song.build({
+                    trackName: metadata.title,
+                    artist: metadata.artist[0],
+                    uploaderId: req.body.uploaderId,
+                    securityType: req.body.securityType,
+                    trackLink: "http://localhost:3000"+target_path.slice(7)
+                })
+                newSong.save().then(function()
+                {
+                    res.json({song:newSong})
+                })
+            });
         });
     });
-    var parser = mm(fs.createReadStream(target_path), function (err, metadata) {
-        if (err) throw err;
-        console.log(metadata);
-        var newSong = Song.build({
-            trackName: metadata.title,
-            artist: metadata.artist[0],
-            uploaderId: req.body.uploaderId,
-            securityType: req.body.securityType,
-            trackLink: "http://localhost:3000"+target_path.slice(7)
-        })
-        newSong.save().then(function()
-        {
-            res.json({song:newSong})
-        })
-    });
+
 
 })
 app.listen(3000);
