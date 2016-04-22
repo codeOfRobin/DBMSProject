@@ -165,6 +165,27 @@ app.post('/songs/uploaded',function(req,res)
         res.json(songs)
     })
 })
+
+app.post('/songs/shared',function(req,res)
+{
+    sequelize.query("SELECT * FROM `users`", { type: sequelize.QueryTypes.SELECT})
+    .then(function(sharedSongs) {
+        res.json(sharedSongs)
+    })
+})
+
+app.post('/share/create',function(req,res)
+{
+    var share = Share.build({
+        sharedFrom: req.body.sharedFromId,
+        sharedTo: req.body.sharedTo,
+        songId: req.body.songId,
+    })
+    share.save().then(function()
+    {
+        res.json(share)
+    })
+})
 app.post('/user/get',function(req,res)
 {
     User.findOne({ where: {email: req.body.email} }).then(function(existingUser)

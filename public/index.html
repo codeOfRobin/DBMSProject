@@ -37,11 +37,11 @@
         </p>
         <h3>Public Songs</h3>
         <ul ng-repeat = "publicSong in publicSongs">
-            <li> {{publicSong}} </li>
+            <li> {{publicSong.trackName}} <audio controls="" ngf-src="publicSong.trackLink"></audio> </li>
         </ul>
         <h3>Uploaded Songs</h3>
         <ul ng-repeat = "uploadedSong in uploadedSongs">
-            <li> {{uploadedSong}} </li>
+            <li> {{uploadedSong.trackName}} <audio controls="" ngf-src="uploadedSong.trackLink"></audio>  </li>
         </ul>
     </div>
 
