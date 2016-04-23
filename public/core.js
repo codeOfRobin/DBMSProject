@@ -186,9 +186,17 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         });
     }
 
-    function deleteSong(uploadedSong)
+    $scope.deleteSong = function(uploadedSong)
     {
+        $.post( "/song/delete", {email:$auth.getPayload().user,token: $auth.getToken(),songId:uploadedSong.id})
+        .done(function( data ) {
+            console.log(data);
 
+            getPublicSongs()
+            getUploadedSongs()
+            getSharedSongs()
+            $scope.apply()
+        });
     }
 
 

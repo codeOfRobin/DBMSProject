@@ -1,0 +1,25 @@
+// deletions table
+
+var db = require('./db');
+var Sequelize = require('sequelize')
+
+var Deletion = db.define('deletion', {
+    songId: Sequelize.UUID
+    moment: Sequelize.DATETIME
+},{
+    timestamps: false,
+    freezeTableName: true,
+    tableName: 'deletion'
+})
+
+module.exports = Deletion;
+
+// create the trigger
+
+DELIMITER $$
+CREATE TRIGGER admin_deletions AFTER DELETE ON song
+    FOR EACH ROW
+BEGIN
+    INSERT INTO deletion VALUES (OLD.id, NOW());
+END$$
+DELIMITER;

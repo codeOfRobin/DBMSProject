@@ -299,6 +299,21 @@ app.post('/songAvg/get',function(req,res)
         res.json(average)
     })
 })
-
+app.post('/song/delete',function(req,res)
+{
+    if (req.body.email == "admin@admin.com")
+    {
+        Song.destroy({
+            where: {
+                id:req.body.songId
+            }
+        }).then(function(){
+            res.json("done")
+        })
+    }
+    else {
+        res.json("error")
+    }
+})
 app.listen(3000);
 console.log('Magic happens on port 3000');
