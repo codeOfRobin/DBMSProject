@@ -6,7 +6,7 @@ var User = require('./models/user')
 var Song = require('./models/song')
 var Share = require('./models/share')
 var db = require('./models/db');
-var rating = require('./models/rating');
+var Rating = require('./models/rating');
 var mm = require('musicmetadata');
 var async = require('async')
 var bodyParser = require('body-parser');
@@ -21,6 +21,7 @@ var request = require('request');
 User.sync()
 Song.sync({force:false})
 Share.sync()
+Rating.sync()
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('tiny'))
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -204,6 +205,29 @@ app.post('/user/get',function(req,res)
     {
         // console.log(existingUser);
         res.json({user:existingUser})
+    })
+})
+
+app.post('/rating/set',function(req,res)
+{
+    Rating.findOne({where: {userId:req.body.userId, songId:req.body.songId}}).then(function(existingRating)
+    {
+        if(existingRating)
+        {
+            existingRating.rating = req.body.rating
+        }
+        else
+        {
+            var existingRating = Rating.build({
+                userId:req.body.userId,
+                songId:req.body.songId,
+                rating:req.body.rating
+            })
+        }
+        existingRating.save().then(function()
+        {
+            res.json(existingRating)
+        })
     })
 })
 app.post('/uploadSongs', upload.any(), function (req, res, next)

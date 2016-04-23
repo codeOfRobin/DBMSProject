@@ -101,7 +101,14 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         .done(function( data ) {
             console.log(data);
         });
-
+    }
+    $scope.ratingChange = function(publicSong)
+    {
+        var postParams = {userId : $scope.currentUser.id, songId: publicSong.id, rating:publicSong.rating}
+        $.post( "/rating/set", postParams)
+        .done(function( data ) {
+            console.log(data);
+        });
     }
     function updateAllData()
     {
