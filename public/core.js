@@ -1,6 +1,6 @@
-var musicApp = angular.module('musicApp', ['ngFileUpload','LocalStorageModule','satellizer']);
+var musicApp = angular.module('musicApp', ['ngFileUpload','LocalStorageModule','satellizer','ui.router']);
 
-musicApp.config(function (localStorageServiceProvider, $authProvider)
+musicApp.config(function (localStorageServiceProvider, $authProvider, $stateProvider, $urlRouterProvider)
 {
 
     localStorageServiceProvider.setPrefix('musicApp');
@@ -8,6 +8,22 @@ musicApp.config(function (localStorageServiceProvider, $authProvider)
     $authProvider.facebook({
         clientId: '473466989524267'
     });
+    $urlRouterProvider.otherwise('/login');
+    $stateProvider
+        .state('login', {
+            url: '/login',
+            templateUrl: './templates/login.html'
+        })
+
+        .state('signup', {
+            url: '/signup',
+            templateUrl: './templates/signup.html'
+        })
+
+        .state('profile', {
+            url: '/profile',
+            templateUrl: './templates/profile.html'
+        });
 
 });
 
@@ -37,9 +53,11 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
             console.log("signed up user");
             console.log($auth.getPayload().user);
             updateAllData()
+            return "profile"
         })
         .catch(function(error) {
             console.log(error);
+            return "signup"
         });
     };
     $scope.login = function() {
@@ -48,9 +66,11 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
             console.log("logged in user");
             console.log($auth.getPayload().user);
             updateAllData()
+            return "profile"
         })
         .catch(function(error) {
             console.log(error);
+            return "login"
         });
     };
 

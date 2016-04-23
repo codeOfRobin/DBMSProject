@@ -1,17 +1,28 @@
 <div class="container">
-    
+
+    {{currentUser}}
+
     <div class="jumbotron text-center">
         <h1>I'm a Todo-aholic <span class="label label-info">{{ todos.length }}</span></h1>
     </div>
-    <p>
-        Ab chalega {{2+34}}
-    </p>
 
-    <ul ng-repeat = "song in songs">
-        <li> {{song}} </li>
+    <h3>Public Songs</h3>
+    <ul ng-repeat = "publicSong in publicSongs">
+        <li> {{publicSong}} </li>
     </ul>
-</div>
 
-Drop File:
-<div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
-<audio controls="" ngf-src="!files[0].$error && files[0]"></audio>
+    <h3>Uploaded Songs</h3>
+    <ul ng-repeat = "uploadedSong in uploadedSongs">
+        <li> {{uploadedSong}} </li>
+    </ul>
+
+    <h3>Shared Songs</h3>
+    <ul ng-repeat = "sharedSong in sharedSongs">
+        <li> {{sharedSong}} </li>
+    </ul>
+
+    Drop File:
+    <label><input type="checkbox" ng-model="isSongPublic">Public?</label>
+    <div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
+    <audio controls="" ngf-src="!files[0].$error && files[0]"></audio>
+</div>
