@@ -11,4 +11,4 @@ var Rating = db.define('rating', {
     tableName: 'rating'
 })
 
-module.exports = Song;
+module.exports = Rating;
