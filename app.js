@@ -124,31 +124,6 @@ app.post('/auth/login', function(req, res)
         });
     });
 })
-// app.use(function(req, res, next)
-// {
-//     var token = req.body.token || req.query.token || req.headers['x-access-token'];
-//     if (token) {
-//         // verifies secret and checks exp
-//         jwt.verify(token, app.get(secret), function(err, decoded) {
-//             if (err) {
-//                 return res.json({ success: false, message: 'Failed to authenticate token.' });
-//             } else {
-//                 // if everything is good, save to request for use in other routes
-//                 req.decoded = decoded;
-//                 next();
-//             }
-//         });
-//
-//     } else {
-//         // if there is no token
-//         // return an error
-//         return res.status(403).send({
-//             success: false,
-//             message: 'No token provided.'
-//         });
-//
-//     }
-// });
 
 app.get('/*.mp3',function(req,res)
 {
@@ -159,6 +134,33 @@ app.get('*',function(req,res)
 {
     res.sendFile(__dirname + '/public/index.html');
 })
+app.use(function(req, res, next)
+{
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    if (token) {
+        // verifies secret and checks exp
+        jwt.verify(token, 'adsf', function(err, decoded) {
+            if (err) {
+                return res.json({ success: false, message: 'Failed to authenticate token.' });
+            } else {
+                // if everything is good, save to request for use in other routes
+                req.decoded = decoded;
+                next();
+            }
+        });
+
+    } else {
+        // if there is no token
+        // return an error
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+
+    }
+});
+
+
 
 app.post('/songs/public',function(req,res)
 {
@@ -228,6 +230,14 @@ app.post('/rating/set',function(req,res)
         {
             res.json(existingRating)
         })
+    })
+})
+
+app.post('/songAvg/get',function(req,res)
+{
+    db.query("SELECT avg(`rating`) AS `avg` FROM `rating` AS `rating` WHERE `rating`.`songId` = \"" + req.body.songId+"\"", { type: db.QueryTypes.SELECT})
+    .then(function(average) {
+        res.json(average)
     })
 })
 app.post('/uploadSongs', upload.any(), function (req, res, next)

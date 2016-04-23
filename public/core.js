@@ -96,7 +96,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
 
     $scope.shareSong = function(uploadedSong)
     {
-        var postParams = {sharedToEmail : uploadedSong.shareTo, songId: uploadedSong.id, sharedFromId:$scope.currentUser.id}
+        var postParams = {sharedToEmail : uploadedSong.shareTo, songId: uploadedSong.id, sharedFromId:$scope.currentUser.id, token: $auth.getToken()}
         $.post( "/share/create", postParams)
         .done(function( data ) {
             console.log(data);
@@ -104,7 +104,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
     }
     $scope.ratingChange = function(publicSong)
     {
-        var postParams = {userId : $scope.currentUser.id, songId: publicSong.id, rating:publicSong.rating}
+        var postParams = {userId : $scope.currentUser.id, songId: publicSong.id, rating:publicSong.rating,token: $auth.getToken()}
         $.post( "/rating/set", postParams)
         .done(function( data ) {
             console.log(data);
@@ -118,17 +118,31 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
     //songs
     function getPublicSongs()
     {
-        $.post( "/songs/public")
+        $.post( "/songs/public",{token:$auth.getToken()})
         .done(function( data ) {
             console.log(data);
             $scope.publicSongs = data
             $scope.$apply();
+            getPublicRatings()
         });
     }
 
+    function getPublicRatings()
+    {
+        for (var index in $scope.publicSongs)
+        {
+            $.post( "/songAvg/get",{token:$auth.getToken(),songId:$scope.publicSongs[index].id})
+            .done(function( data ) {
+                console.log(data);
+                $scope.publicSongs[index].averageRating = data[0].avg
+                $scope.$apply();
+            });
+
+        }
+    }
     function getUploadedSongs()
     {
-        var postParams = {uploaderId:$scope.currentUser.id}
+        var postParams = {uploaderId:$scope.currentUser.id,token: $auth.getToken()}
         $.post( "/songs/uploaded", postParams)
         .done(function( data ) {
             console.log(data);
@@ -139,7 +153,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
 
     function getSharedSongs()
     {
-        var postParams = {sharedTo:$scope.currentUser.id}
+        var postParams = {sharedTo:$scope.currentUser.id,token: $auth.getToken()}
         $.post( "/songs/shared", postParams)
         .done(function( data ) {
             console.log(data);
@@ -150,7 +164,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
 
     function userRequest()
     {
-        $.post( "/user/get", {email:$auth.getPayload().user})
+        $.post( "/user/get", {email:$auth.getPayload().user,token: $auth.getToken()})
         .done(function( data ) {
             console.log(data);
             $scope.currentUser = data.user
