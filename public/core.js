@@ -25,6 +25,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         {
             console.log("auth ho gaya");
             console.log($auth.getPayload());
+            updateAllData()
         })
     };
     var user = {
@@ -93,7 +94,15 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         }
     }
 
+    $scope.shareSong = function(uploadedSong)
+    {
+        var postParams = {sharedToEmail : uploadedSong.shareTo, songId: uploadedSong.id, sharedFromId:$scope.currentUser.id}
+        $.post( "/share/create", postParams)
+        .done(function( data ) {
+            console.log(data);
+        });
 
+    }
     function updateAllData()
     {
         userRequest()
@@ -121,6 +130,17 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         });
     }
 
+    function getSharedSongs()
+    {
+        var postParams = {sharedTo:$scope.currentUser.id}
+        $.post( "/songs/shared", postParams)
+        .done(function( data ) {
+            console.log(data);
+            $scope.sharedSongs = data
+            $scope.$apply();
+        });
+    }
+
     function userRequest()
     {
         $.post( "/user/get", {email:$auth.getPayload().user})
@@ -130,6 +150,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
             $scope.$apply();
             getPublicSongs()
             getUploadedSongs()
+            getSharedSongs()
         });
     }
 

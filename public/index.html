@@ -37,11 +37,17 @@
         </p>
         <h3>Public Songs</h3>
         <ul ng-repeat = "publicSong in publicSongs">
-            <li> {{publicSong.trackName}} <audio controls="" ngf-src="publicSong.trackLink"></audio><input class="form-control input-lg" type="text" name="publicSong.shareTo" ng-model="shareTo" placeholder="Email"> <a ng-click = "shareSong(publicSong)">SHARE</a> </li>
+            <li> {{publicSong.trackName}} <audio controls="" ngf-src="publicSong.trackLink"></audio> </li>
         </ul>
         <h3>Uploaded Songs</h3>
         <ul ng-repeat = "uploadedSong in uploadedSongs">
-            <li> {{uploadedSong.trackName}} <audio controls="" ngf-src="uploadedSong.trackLink"></audio>  </li>
+            <li> {{uploadedSong.trackName}} <audio controls="" ngf-src="uploadedSong.trackLink"></audio>
+            <input class="form-control input-sm" type="text" name="uploadedSong.shareTo" ng-model="uploadedSong.shareTo" placeholder="Email"> <a ng-click = "shareSong(uploadedSong)">SHARE</a>  </li>
+        </ul>
+
+        <h3>Songs shared with you</h3>
+        <ul ng-repeat = "sharedSong in sharedSongs">
+            <li> {{sharedSong.trackName}} <audio controls="" ngf-src="sharedSong.trackLink"></audio> </li>
         </ul>
     </div>
 

@@ -5,6 +5,8 @@ var Potluck = require('./models/potluck')
 var User = require('./models/user')
 var Song = require('./models/song')
 var Share = require('./models/share')
+var db = require('./models/db');
+var rating = require('./models/rating');
 var mm = require('musicmetadata');
 var async = require('async')
 var bodyParser = require('body-parser');
@@ -15,8 +17,10 @@ var fs = require('fs')
 var jwt = require('jsonwebtoken');
 var cors = require('cors')
 var request = require('request');
+
 User.sync()
 Song.sync({force:false})
+Share.sync()
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('tiny'))
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -61,19 +65,23 @@ app.post('/auth/facebook', function(req, res)
                         res.send({ token: token });
                     });
                 }
-                var user = User.build({
-                    name: profile.name,
-                    fbID: profile.id,
-                    email: profile.email,
-                })
-                user.save().then(function()
+                else
                 {
-                    jwt.sign({user: profile.email}, 'adsf', {expiresIn: 24*60*60},function(token)
+                    var user = User.build({
+                        name: profile.name,
+                        fbID: profile.id,
+                        email: profile.email,
+                    })
+                    user.save().then(function()
                     {
-                        res.send({ token: token });
-                    });
+                        jwt.sign({user: profile.email}, 'adsf', {expiresIn: 24*60*60},function(token)
+                        {
+                            res.send({ token: token });
+                        });
 
-                })
+                    })
+                }
+
             });
         });
     });
@@ -168,7 +176,7 @@ app.post('/songs/uploaded',function(req,res)
 
 app.post('/songs/shared',function(req,res)
 {
-    sequelize.query("SELECT * FROM `users`", { type: sequelize.QueryTypes.SELECT})
+    db.query("SELECT * FROM song, share WHERE song.id=share.songId AND sharedTo = \"" + req.body.sharedTo+"\"", { type: db.QueryTypes.SELECT})
     .then(function(sharedSongs) {
         res.json(sharedSongs)
     })
@@ -176,15 +184,19 @@ app.post('/songs/shared',function(req,res)
 
 app.post('/share/create',function(req,res)
 {
-    var share = Share.build({
-        sharedFrom: req.body.sharedFromId,
-        sharedTo: req.body.sharedTo,
-        songId: req.body.songId,
-    })
-    share.save().then(function()
+    User.findOne({ where: {email: req.body.sharedToEmail }}).then(function(existingUser)
     {
-        res.json(share)
+        var share = Share.build({
+            sharedFrom: req.body.sharedFromId,
+            sharedTo: existingUser.id,
+            songId: req.body.songId
+        })
+        share.save().then(function()
+        {
+            res.json(share)
+        })
     })
+
 })
 app.post('/user/get',function(req,res)
 {
