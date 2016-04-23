@@ -6,3 +6,14 @@
     padding: 50px 10px;
     margin-left: 10px;
 }
+
+.mdl-dialog__actions
+{
+    width: 50%;
+    margin: auto;
+    margin-top:10%;
+}
+.mdl-dialog__actions a, .mdl-dialog__actions button
+{
+    display: block;
+}
