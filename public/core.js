@@ -54,7 +54,11 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
             console.log(error);
         });
     };
-
+    $scope.logoutCurrentUser = function()
+    {
+        $auth.logout()
+        $auth.removeToken()
+    }
 
     //upload stuff
     $scope.submit = function() {
@@ -85,6 +89,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
             }).then(function (resp) {
                 console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
                 console.log(resp.data);
+                userRequest()
             }, function (resp) {
                 console.log('Error status: ' + resp.status);
             }, function (evt) {
@@ -100,6 +105,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         $.post( "/share/create", postParams)
         .done(function( data ) {
             console.log(data);
+            userRequest()
         });
     }
     $scope.ratingChange = function(publicSong)
@@ -108,6 +114,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         $.post( "/rating/set", postParams)
         .done(function( data ) {
             console.log(data);
+            userRequest()
         });
     }
     function updateAllData()
@@ -168,11 +175,20 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         .done(function( data ) {
             console.log(data);
             $scope.currentUser = data.user
+            if (data.user.email == "admin@admin.com")
+            {
+                $scope.isAdmin = true
+            }
             $scope.$apply();
             getPublicSongs()
             getUploadedSongs()
             getSharedSongs()
         });
+    }
+
+    function deleteSong(uploadedSong)
+    {
+
     }
 
 

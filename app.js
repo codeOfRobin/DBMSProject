@@ -134,6 +134,37 @@ app.get('*',function(req,res)
 {
     res.sendFile(__dirname + '/public/index.html');
 })
+
+app.post('/uploadSongs', upload.any(), function (req, res, next)
+{
+    tmp_path = req.files[0].path;
+    originalName=req.files[0].originalname;
+    target_path =  req.files[0].path +'.' + "mp3"
+    fs.rename(tmp_path, target_path, function(err) {
+        if (err)
+        throw err;
+        fs.unlink(tmp_path, function() {
+            if (err)
+            throw err;
+            // res.json("done : "+ target_path)
+            var parser = mm(fs.createReadStream(target_path), function (err, metadata) {
+                if (err) throw err;
+                console.log(metadata);
+                var newSong = Song.build({
+                    trackName: metadata.title,
+                    artist: metadata.artist[0],
+                    uploaderId: req.body.uploaderId,
+                    securityType: req.body.securityType,
+                    trackLink: "http://localhost:3000"+target_path.slice(7)
+                })
+                newSong.save().then(function()
+                {
+                    res.json({song:newSong})
+                })
+            });
+        });
+    });
+})
 app.use(function(req, res, next)
 {
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -171,10 +202,23 @@ app.post('/songs/public',function(req,res)
 })
 app.post('/songs/uploaded',function(req,res)
 {
-    Song.findAll({where:{uploaderId:req.body.uploaderId}}).then(function(songs)
+    User.findOne({ where: {id: req.body.uploaderId} }).then(function(existingUser)
     {
-        res.json(songs)
-    })
+        if (existingUser.email == "admin@admin.com")
+        {
+            Song.findAll().then(function(songs)
+            {
+                res.json(songs)
+            })
+        }
+        else
+        {
+            Song.findAll({where:{uploaderId:req.body.uploaderId}}).then(function(songs)
+            {
+                res.json(songs)
+            })
+        }
+    });
 })
 
 app.post('/songs/shared',function(req,res)
@@ -233,6 +277,21 @@ app.post('/rating/set',function(req,res)
     })
 })
 
+app.post('user/isAdmin',function(req,res)
+{
+    User.findOne({ where: {id: req.body.uploaderId} }).then(function(existingUser)
+    {
+        if (existingUser.email == "admin@admin.com")
+        {
+            res.json(true)
+        }
+        else
+        {
+            res.json(false)
+        }
+    });
+
+})
 app.post('/songAvg/get',function(req,res)
 {
     db.query("SELECT avg(`rating`) AS `avg` FROM `rating` AS `rating` WHERE `rating`.`songId` = \"" + req.body.songId+"\"", { type: db.QueryTypes.SELECT})
@@ -240,37 +299,6 @@ app.post('/songAvg/get',function(req,res)
         res.json(average)
     })
 })
-app.post('/uploadSongs', upload.any(), function (req, res, next)
-{
-    tmp_path = req.files[0].path;
-    originalName=req.files[0].originalname;
-    target_path =  req.files[0].path +'.' + "mp3"
-    fs.rename(tmp_path, target_path, function(err) {
-        if (err)
-        throw err;
-        fs.unlink(tmp_path, function() {
-            if (err)
-            throw err;
-            // res.json("done : "+ target_path)
-            var parser = mm(fs.createReadStream(target_path), function (err, metadata) {
-                if (err) throw err;
-                console.log(metadata);
-                var newSong = Song.build({
-                    trackName: metadata.title,
-                    artist: metadata.artist[0],
-                    uploaderId: req.body.uploaderId,
-                    securityType: req.body.securityType,
-                    trackLink: "http://localhost:3000"+target_path.slice(7)
-                })
-                newSong.save().then(function()
-                {
-                    res.json({song:newSong})
-                })
-            });
-        });
-    });
 
-
-})
 app.listen(3000);
 console.log('Magic happens on port 3000');

@@ -37,8 +37,8 @@
             Ab chalega {{2+34}}
         </p>
         <h3>Public Songs</h3>
-        <ul ng-repeat = "publicSong in publicSongs">
-            <li> {{publicSong.trackName}} <audio controls="" ngf-src="publicSong.trackLink"></audio>
+        <ul >
+            <li ng-repeat = "publicSong in publicSongs"> {{publicSong.trackName}} <audio controls="" ngf-src="publicSong.trackLink"></audio>
                 Rate : <select ng-model="publicSong.rating"
                 ng-options="opt for opt in [1,2,3,4,5]"
                 ng-change="ratingChange(publicSong)"></select>
@@ -49,41 +49,46 @@
         </li>
     </ul>
     <h3>Uploaded Songs</h3>
-    <ul ng-repeat = "uploadedSong in uploadedSongs">
-        <li> {{uploadedSong.trackName}} <audio controls="" ngf-src="uploadedSong.trackLink"></audio>
-            <input class="form-control input-sm" type="text" name="uploadedSong.shareTo" ng-model="uploadedSong.shareTo" placeholder="Email"> <a ng-click = "shareSong(uploadedSong)">SHARE</a>  </li>
-        </ul>
+    <ul >
+        <li ng-repeat = "uploadedSong in uploadedSongs"> {{uploadedSong.trackName}} <audio controls="" ngf-src="uploadedSong.trackLink"></audio>
+            <input class="form-control input-sm" type="text" name="uploadedSong.shareTo" ng-model="uploadedSong.shareTo" placeholder="Email"> <a ng-click = "shareSong(uploadedSong)">SHARE</a>  <a ng-click = "deleteSong(uploadedSong)" ng-show = "isAdmin"> DELETE </a>
+        </li>
+    </ul>
 
-        <h3>Songs shared with you</h3>
-        <ul ng-repeat = "sharedSong in sharedSongs">
-            <li> {{sharedSong.trackName}} <audio controls="" ngf-src="sharedSong.trackLink"></audio> </li>
-        </ul>
+    <h3>Songs shared with you</h3>
+    <ul >
+        <li ng-repeat = "sharedSong in sharedSongs"> {{sharedSong.trackName}} <audio controls="" ngf-src="sharedSong.trackLink"></audio> </li>
+    </ul>
 
-        Drop File:
-        <label><input type="checkbox" ng-model="isSongPublic">Public?</label>
-        <div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
-        <!-- <audio controls="" ngf-src="!files[0].$error && files[0]"></audio> -->
+    Drop File:
+    <label><input type="checkbox" ng-model="isSongPublic">Public?</label>
+    <div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
+    <!-- <audio controls="" ngf-src="!files[0].$error && files[0]"></audio> -->
 
 
-        {{currentUser}}
-        {{isAuthenticated()}}
-    </div>
+    {{currentUser}}
+    {{isAuthenticated()}}
+    {{isAdmin}}
+    <button ng-click = "logoutCurrentUser()" class="btn btn-lg  btn-block btn-success">Logout</button>
+</div>
 
-    <!--  add isAuthenticated() here-->
-    <div ng-hide = "isAuthenticated()||showSignup" ng-init = "showSignup = false">
-        <input class="form-control input-lg" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
-        <input class="form-control input-lg" type="password" name="password" ng-model="user.password" placeholder="Password" required>
-        <button ng-click = "signup()" class="btn btn-lg  btn-block btn-success">Sign Up</button>
-        <a ng-click = "showSignup = !showSignup; showLogin = !showLogin">Have an account? Login </a>
-    </div>
-
-    <div ng-hide = "isAuthenticated()||!showSignup" ng-init = "showLogin = true">
-        <input class="form-control input-lg" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
-        <input class="form-control input-lg" type="password" name="password" ng-model="user.password" placeholder="Password" required>
-        <button ng-click = "login()" class="btn btn-lg  btn-block btn-success">Login</button>
-        <a ng-click = "showSignup = !showSignup; showLogin = !showLogin">Don't have an account? Sign up here. </a>
-    </div>
-
+<!--  add isAuthenticated() here-->
+<div ng-hide = "isAuthenticated()||!showSignup" ng-init = "showSignup = false">
+    <input class="form-control input-lg" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
+    <input class="form-control input-lg" type="password" name="password" ng-model="user.password" placeholder="Password" required>
+    <button ng-click = "signup()" class="btn btn-lg  btn-block btn-success">Sign Up</button>
+    <a ng-click = "showSignup = !showSignup; showLogin = !showLogin">Have an account? Login </a>
     <button ng-click="authenticate('facebook')">Sign in with Facebook</button>
+</div>
+
+<div ng-hide = "isAuthenticated()||showSignup">
+    <input class="form-control input-lg" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
+    <input class="form-control input-lg" type="password" name="password" ng-model="user.password" placeholder="Password" required>
+    <button ng-click = "login()" class="btn btn-lg  btn-block btn-success">Login</button>
+    <a ng-click = "showSignup = !showSignup">Don't have an account? Sign up here. </a>
+    <button ng-click="authenticate('facebook')">Sign in with Facebook</button>
+</div>
+
+
 </body>
 </html>
