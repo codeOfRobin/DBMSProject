@@ -24,55 +24,123 @@
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
-<link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-deep_purple.min.css" />
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-deep_purple.min.css" />
 
 </head>
 <body ng-controller="mainController">
     <div ng-hide = "!isAuthenticated()" class="container">
-        <p>Login or Register with:</p>
 
         <!-- <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a> -->
 
 
-        <div class="jumbotron text-center">
-            <h1>I'm a Todo-aholic <span class="label label-info">{{ todos.length }}</span></h1>
+        <div class=".mdl-layout__header-row jumbotron text-center">
+            <h1>Ng-Music</h1>
         </div>
-        <p>
-            Ab chalega {{2+34}}
-        </p>
         <h3>Public Songs</h3>
-        <ul >
+        <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+            <thead>
+                <tr>
+                    <th class="mdl-data-table__cell--non-numeric">Track Name</th>
+                    <th>Play</th>
+                    <th>Rate</th>
+                    <th>Avg Rating</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat = "publicSong in publicSongs">
+                    <td class="mdl-data-table__cell--non-numeric">{{publicSong.trackName}}</td>
+                    <td>
+                        <audio controls="" ngf-src="publicSong.trackLink"></audio>
+                    </td>
+                    <td><select ng-model="publicSong.rating"
+                    ng-options="opt for opt in [1,2,3,4,5]"
+                    ng-change="ratingChange(publicSong)"></select></td>
+                    <td>Avg Rating: {{publicSong.averageRating}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- <ul >
             <li ng-repeat = "publicSong in publicSongs"> {{publicSong.trackName}} <audio controls="" ngf-src="publicSong.trackLink"></audio>
                 Rate : <select ng-model="publicSong.rating"
                 ng-options="opt for opt in [1,2,3,4,5]"
                 ng-change="ratingChange(publicSong)"></select>
-                <!-- <p>
-                {{publicSong.rating}}
-            </p> -->
             <span>Avg Rating: {{publicSong.averageRating}}</span>
         </li>
-    </ul>
+    </ul> -->
     <h3>Uploaded Songs</h3>
-    <ul >
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+        <thead>
+            <tr>
+                <th>Track Name</th>
+                <th>Play</th>
+                <th>Rate</th>
+                <th>Avg Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat = "uploadedSong in uploadedSongs">
+                <td class="mdl-data-table__cell--non-numeric">{{uploadedSong.trackName}}</td>
+                <td>
+                    <audio controls="" ngf-src="uploadedSong.trackLink"></audio>
+                </td>
+                <td><select ng-model="uploadedSong.rating"
+                ng-options="opt for opt in [1,2,3,4,5]"
+                ng-change="ratingChange(uploadedSong)"></select></td>
+                <td>Avg Rating: {{uploadedSong.averageRating}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- <ul >
+
         <li ng-repeat = "uploadedSong in uploadedSongs"> {{uploadedSong.trackName}} <audio controls="" ngf-src="uploadedSong.trackLink"></audio>
             <input class="form-control input-sm" type="text" name="uploadedSong.shareTo" ng-model="uploadedSong.shareTo" placeholder="Email"> <a ng-click = "shareSong(uploadedSong)">SHARE</a>  <a ng-click = "deleteSong(uploadedSong)" ng-show = "isAdmin"> DELETE </a>
         </li>
-    </ul>
+    </ul> -->
 
     <h3>Songs shared with you</h3>
-    <ul >
+    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+        <thead>
+            <tr>
+                <th>Track Name</th>
+                <th>Play</th>
+                <th>Rate</th>
+                <th>Avg Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat = "sharedSong in sharedSongs">
+                <td class="mdl-data-table__cell--non-numeric">{{sharedSong.trackName}}</td>
+                <td>
+                    <audio controls="" ngf-src="sharedSong.trackLink"></audio>
+                </td>
+                <td><select ng-model="sharedSong.rating"
+                ng-options="opt for opt in [1,2,3,4,5]"
+                ng-change="ratingChange(sharedSong)"></select></td>
+                <td>Avg Rating: {{sharedSong.averageRating}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- <ul >
         <li ng-repeat = "sharedSong in sharedSongs"> {{sharedSong.trackName}} <audio controls="" ngf-src="sharedSong.trackLink"></audio> </li>
-    </ul>
+    </ul> -->
+    <br>
+    <br>
+    <br>
+    <div class = "centerThisShit">
+        Drop File:
+        <label><input type="checkbox" ng-model="isSongPublic">Public?</label>
+    </div>
 
-    Drop File:
-    <label><input type="checkbox" ng-model="isSongPublic">Public?</label>
     <div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
     <!-- <audio controls="" ngf-src="!files[0].$error && files[0]"></audio> -->
 
-
-    {{currentUser}}
+    <br>
+    <br>
+    <!-- {{currentUser}}
     {{isAuthenticated()}}
-    {{isAdmin}}
+    {{isAdmin}} -->
     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" ng-click = "logoutCurrentUser()" class="btn btn-lg  btn-block btn-success">Logout</button>
 </div>
 

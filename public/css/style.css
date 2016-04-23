@@ -4,7 +4,12 @@
     width: 170px;
     text-align: center;
     padding: 50px 10px;
-    margin-left: 10px;
+    margin: auto;
+}
+.centerThisShit
+{
+    margin: auto;
+    text-align: center;
 }
 
 .mdl-dialog__actions
