@@ -37,7 +37,7 @@
         </p>
         <h3>Public Songs</h3>
         <ul ng-repeat = "publicSong in publicSongs">
-            <li> {{publicSong.trackName}} <audio controls="" ngf-src="publicSong.trackLink"></audio> </li>
+            <li> {{publicSong.trackName}} <audio controls="" ngf-src="publicSong.trackLink"></audio><input class="form-control input-lg" type="text" name="publicSong.shareTo" ng-model="shareTo" placeholder="Email"> <a ng-click = "shareSong(publicSong)">SHARE</a> </li>
         </ul>
         <h3>Uploaded Songs</h3>
         <ul ng-repeat = "uploadedSong in uploadedSongs">
