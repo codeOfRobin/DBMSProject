@@ -32,9 +32,13 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
         email: $scope.email,
         password: $scope.password
     };
-    $scope.signup = function() {
+    $scope.signup = function()
+    {
+        $auth.logout()
+        $auth.removeToken()
         $auth.signup($scope.user)
-        .then(function() {
+        .then(function(response) {
+            $auth.setToken(response);
             console.log("signed up user");
             console.log($auth.getPayload().user);
             updateAllData()
@@ -43,7 +47,10 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
             console.log(error);
         });
     };
-    $scope.login = function() {
+    $scope.login = function()
+    {
+        $auth.logout()
+        $auth.removeToken()
         $auth.login($scope.user)
         .then(function() {
             console.log("logged in user");
