@@ -75,8 +75,7 @@
             <tr>
                 <th>Track Name</th>
                 <th>Play</th>
-                <th>Rate</th>
-                <th>Avg Rating</th>
+                <th ng-show = "isAdmin"> DELETE </th>
             </tr>
         </thead>
         <tbody>
@@ -85,10 +84,9 @@
                 <td>
                     <audio controls="" ngf-src="uploadedSong.trackLink"></audio>
                 </td>
-                <td><select ng-model="uploadedSong.rating"
-                ng-options="opt for opt in [1,2,3,4,5]"
-                ng-change="ratingChange(uploadedSong)"></select></td>
-                <td>Avg Rating: {{uploadedSong.averageRating}}</td>
+                <td>
+                     <a ng-click = "deleteSong(uploadedSong)" ng-show = "isAdmin"> DELETE </a>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -105,8 +103,6 @@
             <tr>
                 <th>Track Name</th>
                 <th>Play</th>
-                <th>Rate</th>
-                <th>Avg Rating</th>
             </tr>
         </thead>
         <tbody>
@@ -115,10 +111,6 @@
                 <td>
                     <audio controls="" ngf-src="sharedSong.trackLink"></audio>
                 </td>
-                <td><select ng-model="sharedSong.rating"
-                ng-options="opt for opt in [1,2,3,4,5]"
-                ng-change="ratingChange(sharedSong)"></select></td>
-                <td>Avg Rating: {{sharedSong.averageRating}}</td>
             </tr>
         </tbody>
     </table>
@@ -131,21 +123,22 @@
     <div class = "centerThisShit">
         Drop File:
         <label><input type="checkbox" ng-model="isSongPublic">Public?</label>
+        <div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
+        <!-- <audio controls="" ngf-src="!files[0].$error && files[0]"></audio> -->
+
+        <br>
+        <br>
+        <!-- {{currentUser}}
+        {{isAdmin}} -->
+        <!-- {{isAuthenticated()}} -->
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" ng-click = "logoutCurrentUser()" class="btn btn-lg  btn-block btn-success">Logout</button>
+
     </div>
 
-    <div ngf-drop="uploadFiles($files)" class="drop-box" ngf-drag-over-class="'dragover'" ngf-multiple="true" ngf-pattern="'audio/*'">Drop music</div>
-    <!-- <audio controls="" ngf-src="!files[0].$error && files[0]"></audio> -->
-
-    <br>
-    <br>
-    <!-- {{currentUser}}
-    {{isAuthenticated()}}
-    {{isAdmin}} -->
-    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" ng-click = "logoutCurrentUser()" class="btn btn-lg  btn-block btn-success">Logout</button>
 </div>
 
 <!--  add isAuthenticated() here-->
-<div class="mdl-dialog__actions" ng-hide = "isAuthenticated()||!showSignup" ng-init = "showSignup = false">
+<div class="mdl-dialog__actions" ng-hide = "isAuthenticated() || !showSignup" ng-init = "showSignup = false">
     <input class="mdl-textfield__input" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
     <input class="mdl-textfield__input" type="password" name="password" ng-model="user.password" placeholder="Password" required>
     <button ng-click = "signup()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Sign Up</button>
@@ -153,7 +146,7 @@
     <a ng-click = "showSignup = !showSignup; showLogin = !showLogin">Have an account? Login </a>
 </div>
 
-<div class="mdl-dialog__actions" ng-hide = "isAuthenticated()||showSignup">
+<div class="mdl-dialog__actions" ng-hide = "isAuthenticated() || showSignup">
     <input class="mdl-textfield__input" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
     <input class="mdl-textfield__input" type="password" name="password" ng-model="user.password" placeholder="Password" required>
     <button ng-click = "login()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Login</button><br>
