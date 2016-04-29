@@ -65,6 +65,7 @@ musicApp.controller('mainController', ['$scope', 'Upload','localStorageService',
     {
         $auth.logout()
         $auth.removeToken()
+        $scope.isAdmin = false
     }
 
     //upload stuff

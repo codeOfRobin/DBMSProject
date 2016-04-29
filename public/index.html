@@ -75,6 +75,9 @@
             <tr>
                 <th>Track Name</th>
                 <th>Play</th>
+                <th>
+                    Share
+                </th>
                 <th ng-show = "isAdmin"> DELETE </th>
             </tr>
         </thead>
@@ -83,6 +86,9 @@
                 <td class="mdl-data-table__cell--non-numeric">{{uploadedSong.trackName}}</td>
                 <td>
                     <audio controls="" ngf-src="uploadedSong.trackLink"></audio>
+                </td>
+                <td>
+                    <input class="form-control input-sm" type="text" name="uploadedSong.shareTo" ng-model="uploadedSong.shareTo" placeholder="Email"> <a ng-click = "shareSong(uploadedSong)">SHARE</a>
                 </td>
                 <td>
                      <a ng-click = "deleteSong(uploadedSong)" ng-show = "isAdmin"> DELETE </a>
@@ -103,6 +109,7 @@
             <tr>
                 <th>Track Name</th>
                 <th>Play</th>
+
             </tr>
         </thead>
         <tbody>
@@ -111,6 +118,7 @@
                 <td>
                     <audio controls="" ngf-src="sharedSong.trackLink"></audio>
                 </td>
+
             </tr>
         </tbody>
     </table>
@@ -128,16 +136,16 @@
 
         <br>
         <br>
-        <!-- {{currentUser}}
-        {{isAdmin}} -->
-        <!-- {{isAuthenticated()}} -->
+
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" ng-click = "logoutCurrentUser()" class="btn btn-lg  btn-block btn-success">Logout</button>
 
     </div>
 
 </div>
 
-<!--  add isAuthenticated() here-->
+{{currentUser}}
+{{isAdmin}}
+
 <div class="mdl-dialog__actions" ng-hide = "isAuthenticated() || !showSignup" ng-init = "showSignup = false">
     <input class="mdl-textfield__input" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
     <input class="mdl-textfield__input" type="password" name="password" ng-model="user.password" placeholder="Password" required>
