@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Motivation and Target audience</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link type="text/css" rel="stylesheet" href="assets/css/style.css" />
+    <link type="text/css" rel="stylesheet" href="assets/css/pilcrow.css" />
+    <link type="text/css" rel="stylesheet" href="assets/css/hljs-github.min.css"/>
+    <link type="text/css" rel="stylesheet" href="./style.css"/>
+  </head>
+<body>
+<div class="content"><h1 id="motivation-and-target-audience"><a class="header-link" href="#motivation-and-target-audience"></a>Motivation and Target audience</h1>
+<p>We want to provide an online storage system for the users, where they can upload their songs from the disk into an drive, which is accessible anywhere and everywhere through the internet.
+Music has become an important part of our lives. People listen to it for recreation or health. Some people even live, breathe, and perform music.
+Music has lots of benefits. It can improve the mood, make us productive and release stress. One of the best ways of listening to music is to listen to it online. It can be downloaded from anywhere around the world at just the click of a button. There is a wide variety of songs available for the various kinds of users.</p>
+<p>The music portal is useful to a wide variety of audience, almost of all age groups and different cultural backgrounds. Every user can upload and download a song according to his choice. He can also access the songs shared by his peer groups, cultural group or any other group.</p>
+<p>We envision that it will be a service that lets users upload and play songs from their own collection s. Our target demographic is users who listen to podcasts and less popular music. We envision this being a modern replacement to Grooveshark in the future.</p>
+<h1 id="source-of-data"><a class="header-link" href="#source-of-data"></a>Source of Data</h1>
+<h3 id="tables"><a class="header-link" href="#tables"></a>Tables</h3>
+<ul class="list">
+<li>User:   Id, Name, FB Id, FB Token, Email, Password</li>
+<li>Song:   Trackname, Uploader Id, Security Type(public/private), Artist, Track Link</li>
+<li>Share:  Share From, Share To, Song Id</li>
+<li>Rating: User Id, Song Id, rating</li>
+</ul>
+<h3 id="source"><a class="header-link" href="#source"></a>Source</h3>
+<ul class="list">
+<li>User: User can signup either by entering “Email and Password” or using “Facebook” hence from there “Name, FB Id, FB Token” we getting these entries.</li>
+<li>Song: User can upload song from it&#39;s device and we extract the meta data from songs IdV3 tags which let us get “Trackname, Artist and Track Link”, simultaneously we are taking input from user whether he want to make song Private or Public(only after uploading, one time). Since he can upload song only after log in so from ther we are getting Uploader Id.</li>
+<li>Share: A particular user can share a particular song with a user by typing corresponding user Id.</li>
+<li>Rating: A user can rate a particular song, and from there we are getting “User Id, Song Id, rating”.</li>
+<li>Sample Data: It has been taken from <a href="https://archive.org/details/bhagavad_gita_0803_librivox">https://archive.org/details/bhagavad_gita_0803_librivox</a> and we have put all these songs public at initial stage.</li>
+<li>Clean-up Process: As we are using IdV3 tags so our data is authenticated so there is no need to clean it up.</li>
+</ul>
+<h1 id="e-r-diagram"><a class="header-link" href="#e-r-diagram"></a>E-R Diagram</h1>
+<p><img src="http://i.imgur.com/1Iv1LSk.png" alt="">
+There are two modes of accessing that we have created:</p>
+<h3 id="user"><a class="header-link" href="#user"></a>User</h3>
+<ol class="list">
+<li>User can upload a music file.</li>
+<li>User can play a music file.</li>
+<li>User can make a music file public or private at intial stage as after uploading it.</li>
+<li>User can also share his music files with other users.</li>
+<li>Can not access others private songs.</li>
+</ol>
+
+<h3 id="administrator"><a class="header-link" href="#administrator"></a>Administrator</h3>
+<ol class="list">
+<li>Have access to every song irrespective of public or private.</li>
+<li>Have permission to delete any song or user.</li>
+<li>Admin can make a song public or private.</li>
+<li>Admin can upload songs.</li>
+<li>Can share songs with other users.
+</ol>
+We have designed seprate pages, views for users and Admin because of difference in accessible permissions.</li>
+</ol>
+<h1 id="modes-of-operation"><a class="header-link" href="#modes-of-operation"></a>Modes of Operation</h1>
+<ul class="list">
+<li><p><strong>System view</strong>: We have the &#39;user&#39;, which stores the details of a user. There is also a table &#39;song&#39;, which stores the details of a song when its uploaded. The admin has access to all the songs and he can delete it. There is also a table &#39;share&#39; which contains the details of all the songs shared between two users. The &#39;rating&#39; table contains the ratings of all the songs which has been rated by the users.</p>
+</li>
+<li><p><strong>User View</strong>: A user has access only to those songs which are uploaded by him, shared to him or is public. He can also see the rating for that song. He can&#39;t access any other song.
+Every user has the access or modify his own profile. He can&#39;t access any other person&#39;s profile.</p>
+</li>
+</ul>
+<h1 id="platforms-used"><a class="header-link" href="#platforms-used"></a>Platforms used</h1>
+<p>Front end – Angular, satellizer, Bootstrap
+Back end – Nodejs , express, sequelize, mysql</p>
+</div>
+</body>
+</html>

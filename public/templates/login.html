@@ -1,3 +1,8 @@
-<p>Login or Register with:</p>
-
-<a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
+<div ng-controller="mainController">
+    <input class="form-control input-lg" type="text" name="email" ng-model="user.email" placeholder="Email" required autofocus>
+    <input class="form-control input-lg" type="password" name="password" ng-model="user.password" placeholder="Password" required>
+    <!-- <button ng-click = "login()" class="btn btn-lg  btn-block btn-success">Login</button> -->
+    <button ui-sref = {{login()}} class="btn btn-lg  btn-block btn-success">Login</button>
+    <a ui-sref = "signup">Don't have an account? Sign up here. </a>
+    <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>
+</div>
